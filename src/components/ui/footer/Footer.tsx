@@ -1,12 +1,12 @@
 import React from 'react';
 
 import Logo from '../logo/Logo';
-import Button from '../button/Button';
 
 const Footer = () => {
   const onMoveClick = () => {
     window.location.href = '/login';
   };
+
   return (
     <footer className="w-full md:flex h-96 bg-neutral-100 justify-center items-center">
       <div className="w-full h-full flex flex-col md:flex-row justify-center items-center">
@@ -43,13 +43,13 @@ const Footer = () => {
             <span>개인정보 처리방침</span>
           </div>
         </div>
-        <div className="pt-2 md:p-10 md:h-full flex flex-col justify-between items-end">
-          <Button
+        <div className="pt-2 md:p-10 md:h-full flex flex-col justify-between items-end p-2 w-fit hover:-translate-y-0.5 transition-all">
+          <button
             className="hidden md:flex rounded-xl text-slate-800 border border-slate-800 px-4 hover:bg-slate-800 hover:text-slate-200"
             onClick={onMoveClick}
           >
             로그인
-          </Button>
+          </button>
           <Logo />
         </div>
       </div>
