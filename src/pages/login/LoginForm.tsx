@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 import { useFormik } from 'formik';
+
+import { login } from '../../apis/user';
 
 import KakaoSymbol from '../../assets/kakao_symbol.png';
 import NaverSymbol from '../../assets/naver_symbol.png';
@@ -44,30 +45,22 @@ const LoginForm = () => {
     return errors;
   };
 
-  const login = async (email: string, password: string) => {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_API_URL}/login`,
-      {
-        email,
-        password
-      }
-    );
-
-    return response;
-  };
-
   const formik = useFormik({
     initialValues,
     onSubmit: async (values: IFormValues) => {
-      const response = await login(values.email, values.password);
-      const { access_token: accessToken, refresh_token: refreshToken } =
-        response.data;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
+      try {
+        const { accessToken, refreshToken } = await login(values.email, values.password);
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+      } catch (error: any) {
+        console.log(error);
+        alert(error.message)
+      }
       navigate('/home');
     },
     validate
   });
+
   return (
     <div className="flex-1  w-full flex flex-col items:center md:items-end mr-10  justify-center m-4 p-4 md:mr-52">
       <div className=" min-w-sm max-w-sm">

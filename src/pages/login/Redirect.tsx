@@ -1,30 +1,29 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
+import { socialLogin } from '../../apis/user';
 
 const Redirect = () => {
   const navigate = useNavigate();
   const code = new URL(window.location.href).searchParams.get('code');
 
-  const socialLogin = async (code: string) => {
+  const login = async (code: string) => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_API_URL}/login?code=${code}`
-      );
-      const { access_token: accessToken, refresh_token: refreshToken } =
-        response.data;
+      const { accessToken, refreshToken } = await socialLogin(code);
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
-      navigate('/home');
     } catch (error: any) {
-      console.log(error);
+      console.log(error)
+      alert(error.message)
     }
+    navigate('/home');
   };
 
   useEffect(() => {
     if (code != null) {
-      socialLogin(code).catch((error: any) => {
-        console.log(error);
+      login(code).catch((error) => {
+        console.log(error)
+        alert(error.message)
       });
     } else {
       console.log('인가 코드 없음');
