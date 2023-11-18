@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Logo from '../../components/ui/logo/Logo';
-import Button from '../../components/ui/button/Button';
 import EmptyImg from '../../assets/empty_seoul.png';
 
 const MainScreen = () => {
@@ -23,12 +22,12 @@ const MainScreen = () => {
             </p>
           </h2>
 
-          <Button
-            className="mt-10 border-2 border-slate-100 rounded-full text-xl font-bold px-6 text-slate-100 hover:bg-slate-100 hover:text-slate-950"
+          <button
+            className="mt-10 border-2 border-slate-100 rounded-full text-xl font-bold px-6 text-slate-100 hover:bg-slate-100 hover:text-slate-950 p-2 w-fit hover:-translate-y-0.5 transition-all"
             onClick={onMoveClick}
           >
             이용하러 가기
-          </Button>
+          </button>
         </div>
         <div className="h-fit md:w-2/3  md:h-full flex justify-center items-center">
           <div className="h-fit max-h-[calc(50vh)] md:max-h-none flex justify-items-center aspect-auto">

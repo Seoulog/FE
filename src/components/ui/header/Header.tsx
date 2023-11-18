@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Logo from '../logo/Logo';
-import Button from '../button/Button';
 
 const Header = () => {
   const [headerClass, setHeaderClass] = useState('fixed -top-16 z-50');
@@ -19,15 +18,22 @@ const Header = () => {
     };
   }, []);
 
+  const onMoveClick = () => {
+    window.location.href = '/login';
+  };
+
   return (
     <header
       className={`w-full hidden md:flex ${headerClass} transition-all h-16 bg-neutral-100 px-auto justify-center items-center drop-shadow-lg`}
     >
       <div className="w-full max-w-6xl flex justify-between items-center px-8">
         <Logo withKorean className="flex"></Logo>
-        <Button className="flex font-semibold">
+        <button
+          className="flex font-semibold p-2 w-fit hover:-translate-y-0.5 transition-all"
+          onClick={onMoveClick}
+        >
           이용하러 가기
-        </Button>
+        </button>
       </div>
     </header>
   );
