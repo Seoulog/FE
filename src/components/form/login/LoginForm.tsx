@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 
 import { defaultLogin } from '../../../lib/actions/loginActions';
-import { validate } from '../../../lib/validations/LoginFormValidation';
+import { validate } from '../../../lib/validations/LoginValidation';
 
 interface IFormValues {
   email: string;
