@@ -27,7 +27,7 @@ const Login = () => {
         <div className="flex flex-row space-x-4 mt-4">
           {/* kakao */}
           <SocialLoginButton
-            additionalClassName="bg-[#FEE500] rounded-full flex items-center justify-center"
+            className="bg-[#FEE500] rounded-full flex items-center justify-center"
             src={KakaoSymbol}
             alt="kakao_symbol"
             to={`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI}&response_type=code`}

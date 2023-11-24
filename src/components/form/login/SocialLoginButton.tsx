@@ -3,20 +3,20 @@ import { Link } from 'react-router-dom';
 
 interface ISocialLoginButtonProps {
   to: string;
-  additionalClassName?: string;
+  className?: string;
   src: string;
   alt: string;
 }
 
 const SocialLoginButton = ({
   to,
-  additionalClassName,
+  className,
   src,
   alt
 }: ISocialLoginButtonProps) => {
   return (
     <Link to={to}>
-      <button type="button" className={`w-16 h-16 ${additionalClassName}`}>
+      <button type="button" className={`w-16 h-16 ${className}`}>
         <img src={src} alt={alt} />
       </button>
     </Link>
