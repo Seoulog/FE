@@ -22,13 +22,10 @@ const LoginForm = () => {
     initialValues,
     onSubmit: async (values: IFormValues) => {
       try {
-        const { accessToken, refreshToken } = await defaultLogin(
-          values.email,
-          values.password
-        );
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
-        navigate('/home');
+        const response = await defaultLogin(values.email, values.password);
+        if (response.status === 200) {
+          navigate('/home');
+        }
       } catch (error) {
         console.log(error);
       }

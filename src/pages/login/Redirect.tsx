@@ -11,13 +11,10 @@ const Redirect = () => {
 
   const login = async (code: string) => {
     try {
-      const { accessToken, refreshToken } = await socialLogin(
-        platform as string,
-        code
-      );
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      navigate('/home');
+      const response = await socialLogin(platform as string, code);
+      if (response.status === 200) {
+        navigate('/home');
+      }
     } catch (error: any) {
       console.log(error);
     }
