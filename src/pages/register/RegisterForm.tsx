@@ -23,7 +23,7 @@ interface IFormError {
   nickname?: string;
 }
 
-const SignForm = () => {
+const RegisterForm = () => {
   const navigate = useNavigate();
   const initialValues: IFormValues = {
     email: '',
@@ -206,4 +206,4 @@ const SignForm = () => {
   );
 };
 
-export default SignForm;
+export default RegisterForm;
