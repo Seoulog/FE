@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useFormik } from 'formik';
 
-import { register } from '../../../lib/actions/RegisterActions';
+import { defaultSignUp } from '../../../lib/actions/RegisterActions';
 import { validate } from '../../../lib/validations/RegisterValidation';
 
 interface IFormValues {
@@ -26,13 +26,11 @@ const RegisterForm = () => {
     initialValues,
     onSubmit: async (values: IFormValues) => {
       try {
-        const { accessToken, refreshToken } = await register(
+        await defaultSignUp(
           values.email,
           values.password,
           values.nickname
         );
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', refreshToken);
         navigate('/home');
       } catch (error: any) {
         console.log(error);
