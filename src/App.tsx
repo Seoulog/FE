@@ -2,6 +2,10 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Landing from './pages/landing';
+import Login from './pages/login';
+import Redirect from './pages/login/Redirect';
+import FindPassword from './pages/help/password';
+import SignUp from './pages/sign';
 import Home from './pages/home';
 
 const App = () => {
@@ -10,6 +14,10 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/login/redirect/*" element={<Redirect />} />
+          <Route path="/sign" element={<SignUp />} />
+          <Route path="/help/password" element={<FindPassword />} />
           <Route path="/home" element={<Home />} />
           <Route path="*" element={<div>Not Found</div>} />
         </Routes>

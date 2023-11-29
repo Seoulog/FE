@@ -6,6 +6,10 @@ module.exports = {
       fontFamily: {
         inknut: ['Inknut Antiqua', 'serif'],
       },
+      colors: {
+        'seoul-brown': '#5F4541',
+        'form-label': '#504E48',
+      },
     },
   },
   plugins: [],
