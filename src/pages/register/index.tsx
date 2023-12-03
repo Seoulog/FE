@@ -4,7 +4,7 @@ import Layout from './Layout';
 import SeoulImg from '../../assets/empty_seoul.png';
 import RegisterForm from '../../components/form/register/RegisterForm';
 import LoginLink from '../../components/form/register/LoginLink';
-import SocialLoginButton from '../../components/form/SocialLoginButton';
+import SocialRegisterButton from '../../components/form/register/SocialRegisterButton';
 import KakaoSymbol from '../../assets/kakao_symbol.png';
 import NaverSymbol from '../../assets/naver_symbol.png';
 import Logo from '../../components/ui/logo/Logo';
@@ -33,17 +33,17 @@ const Register = () => {
         <p className="text-[#504E48] font-bold text-2xl">SNS 간편 로그인</p>
         <div className="flex flex-row space-x-4">
           {/* kakao */}
-          <SocialLoginButton
+          <SocialRegisterButton
             className="bg-[#FEE500] rounded-full flex items-center justify-center"
             src={KakaoSymbol}
             alt="kakao_symbol"
-            to={`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_LOGIN_REDIRECT_URI}&response_type=code`}
+            to={`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_REST_API_KEY}&redirect_uri=${process.env.REACT_APP_KAKAO_REGISTER_REDIRECT_URI}&response_type=code`}
           />
           {/* naver */}
-          <SocialLoginButton
+          <SocialRegisterButton
             src={NaverSymbol}
             alt="naver_symbol"
-            to={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${process.env.REACT_APP_NAVER_CLIENT_API_KEY}&state=false&redirect_uri=${process.env.REACT_APP_NAVER_LOGIN_REDIRECT_URI}`}
+            to={`https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${process.env.REACT_APP_NAVER_CLIENT_API_KEY}&state=false&redirect_uri=${process.env.REACT_APP_NAVER_REGISTER_REDIRECT_URI}`}
           />
         </div>
         <Logo className="text-[#5f4541] flex" />

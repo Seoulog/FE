@@ -1,19 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-interface ISocialLoginButtonProps {
+interface ISocialRegisterButtonProps {
   to: string;
   className?: string;
   src: string;
   alt: string;
 }
 
-const SocialLoginButton = ({
+const SocialRegisterButton = ({
   to,
   className,
   src,
   alt
-}: ISocialLoginButtonProps) => {
+}: ISocialRegisterButtonProps) => {
   return (
     <Link to={to}>
       <button type="button" className={`w-16 h-16 ${className}`}>
@@ -23,4 +23,4 @@ const SocialLoginButton = ({
   );
 };
 
-export default SocialLoginButton;
+export default SocialRegisterButton;
