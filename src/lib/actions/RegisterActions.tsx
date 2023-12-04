@@ -15,11 +15,22 @@ export const defaultSignUp = async (
   password: string,
   nickname: string
 ) => {
-  await axios.post(`${process.env.REACT_APP_BASE_API_URL}/users/signup`, {
-    email,
-    password,
-    nickname
-  });
+  const response = await axios.post(
+    `${process.env.REACT_APP_BASE_API_URL}/users/signup`,
+    {
+      email,
+      password,
+      nickname
+    }
+  );
 
-  return null;
+  return response;
+};
+
+export const socialSignUp = async (platform: string, code: string) => {
+  const response = await axios.post(
+    `${process.env.REACT_APP_BASE_API_URL}/users/signup/${platform}?code=${code}`
+  );
+
+  return response;
 };
