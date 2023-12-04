@@ -34,7 +34,14 @@ const LoginForm = () => {
   });
 
   return (
-    <form noValidate className="flex flex-col mt-12">
+    <form
+      noValidate
+      className="flex flex-col mt-12"
+      onSubmit={(e) => {
+        e.preventDefault();
+        formik.handleSubmit();
+      }}
+    >
       {/* 헤더 */}
       <p className="text-seoul-brown font-bold text-2xl lg:text-3xl">
         내가 만들어가는 서울 로그

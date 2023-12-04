@@ -17,7 +17,7 @@ const Login = () => {
         <LoginForm />
         {/* helper 링크 (회원가입, 비밀번호 찾기) */}
         <div className="flex flex-row justify-between -mt-4">
-          <HelperLink to="/sign" content="아직 회원이 아니에요." />
+          <HelperLink to="/register" content="아직 회원이 아니에요." />
           <HelperLink to="/help/password" content="비밀번호를 잊어버렸어요." />
         </div>
         {/* 소셜 로그인 */}
