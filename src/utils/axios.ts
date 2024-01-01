@@ -1,12 +1,10 @@
 import axios, {
   type AxiosError,
   type AxiosHeaders,
-  type AxiosRequestConfig,
+  // type AxiosRequestConfig,
   type AxiosResponse,
   type InternalAxiosRequestConfig
 } from 'axios';
-
-import { getCookie, setCookie } from './cookie';
 
 export const defaultAxios = axios.create({
   baseURL: process.env.REACT_APP_BASE_API_URL,
@@ -22,8 +20,7 @@ export const authAxios = axios.create({
 const onRequest = (
   config: InternalAxiosRequestConfig
 ): InternalAxiosRequestConfig => {
-  // const accessToken = localStorage.getItem('access_token');
-  const accessToken = getCookie('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
 
   (config.headers as AxiosHeaders).set(
     'Authorization',
@@ -49,44 +46,24 @@ const onResponse = (response: AxiosResponse): AxiosResponse => {
 const onResponseError = async (
   error: AxiosError | Error
 ): Promise<AxiosError> => {
-  const err = error as unknown as AxiosError;
-  const { response } = err;
-  const prevConfig = err?.config as AxiosRequestConfig;
+  // TODO : token 재발급
+  // const err = error as unknown as AxiosError;
+  // const { response } = err;
+  // const prevConfig = err?.config as AxiosRequestConfig;
 
   // Forbidden error (토큰 만료)
-  if (response != null && response.status === 403) {
-    const accessToken = getCookie('accessToken');
-    const refreshToken = getCookie('refreshToken');
-    // refresh token이 만료되었거나 삭제된 경우
-    if (refreshToken == null) {
-      console.log('리프레스 토큰 만료 or 삭제됨');
-      // 이후 처리 로직은 고민중
-      // 로그인 페이지로 이동?
-    } else {
-      // access token 재발급 요청
-      try {
-        const data = await defaultAxios.get('refresh', {
-          headers: {
-            Refresh: `Bearer ${refreshToken}`,
-            Authorization: `Bearer ${accessToken}`
-          }
-        });
-        if (err.response != null) {
-          setCookie('accessToken', data.data.accessToken, {
-            path: '/',
-            secure: '/'
-          });
-          setCookie('refreshToken', data.data.refreshToken, {
-            path: '/',
-            secure: '/'
-          });
-          return await authAxios.request(prevConfig);
-        }
-      } catch (er) {
-        console.log(er);
-      }
-    }
-  }
+  // if (response != null && response.status === 403) {
+  //   try {
+  //     const data = await defaultAxios.get('refresh', {
+  //       headers: {
+  //         Refresh: `Bearer ${refreshToken}`,
+  //         Authorization: `Bearer ${accessToken}`
+  //       }
+  //     });
+  //   } catch (er) {
+  //     console.log(er);
+  //   }
+  // }
   return await Promise.reject(error);
 };
 

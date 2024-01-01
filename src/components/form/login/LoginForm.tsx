@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 
 import { defaultLogin } from '../../../lib/actions/loginActions';
 import { validate } from '../../../lib/validations/LoginValidation';
+import axios from 'axios';
 
 interface IFormValues {
   email: string;
@@ -24,10 +25,19 @@ const LoginForm = () => {
       try {
         const response = await defaultLogin(values.email, values.password);
         if (response.status === 200) {
+          localStorage.setItem('accessToken', response.data.access_token);
           navigate('/home');
         }
       } catch (error) {
-        console.log(error);
+        if (axios.isAxiosError(error)) {
+          const { code } = error.response?.data;
+          if (code === 400) {
+            alert(error.response?.data.message);
+          }
+          if (code === 500) {
+            alert('서버 내부 오류가 발생하였습니다.');
+          }
+        }
       }
     },
     validate
