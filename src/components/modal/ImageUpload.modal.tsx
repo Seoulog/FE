@@ -1,49 +1,53 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
 import { defaultAxios } from '../../utils/axios';
+import axios from 'axios';
 
 const ImageUploadModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState<any>(null);
-  // const [selectedFile, setSelectedFile] = useState<File>();
+  const [selectedFile, setSelectedFile] = useState<File>();
 
   const handleButtonClick = () => {
     setIsOpen(!isOpen);
   };
 
   const handleImageChange = (e: any) => {
-    const file = e.target.files[0];
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const handleSubmit = async () => {
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImageUrl(reader.result);
-      };
-      reader.readAsDataURL(file);
+    if (!selectedFile) {
+      alert('Please select a file');
+      return;
     }
 
-    defaultAxios
-      .post('/file/presigned', file)
-      .then((res) => {
-        console.log('res : ', res);
-        const presignedUrl: string = res.data;
-        console.log(presignedUrl);
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/file/presigned',
+        {
+          fileName: selectedFile?.name,
+          fileType: selectedFile?.type
+        }
+      );
 
-        defaultAxios
-          .put(presignedUrl, file, {
-            headers: {
-              'Content-Type': file.type
-            }
-          })
-          .then((res) => {
-            console.log('after put: ', res);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
+      const { url } = response.data;
+      console.log(response.data);
+
+      const res = await axios.put(url, selectedFile, {
+        headers: {
+          'Content-Type': selectedFile.type
+        }
       });
+
+      alert('File uploaded successfully!');
+      return res;
+    } catch (error) {
+      console.error('Error uploading file: ', error);
+      alert('Error uploading file. Please try again.');
+    }
   };
 
   return (
@@ -84,7 +88,10 @@ const ImageUploadModal = () => {
 
         {/* metadata로 가져오는 위치 구/동 표기하고, 다른 구/동으로 변경할 수 있도록 드롭다운 등으로 표기 */}
 
-        <button className="mt-2 text-base px-2 py-1 text-slate-50 border border-slate-50 rounded-md hover:bg-slate-50 hover:text-purple-900">
+        <button
+          onClick={handleSubmit}
+          className="mt-2 text-base px-2 py-1 text-slate-50 border border-slate-50 rounded-md hover:bg-slate-50 hover:text-purple-900"
+        >
           업로드 하기
         </button>
       </div>
