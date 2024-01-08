@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useFormik } from 'formik';
 
-import { defaultLogin } from '../../../lib/actions/loginActions';
+import { defaultLogin } from '../../../lib/actions/user.actions';
 import { validate } from '../../../lib/validations/LoginValidation';
 
 interface IFormValues {

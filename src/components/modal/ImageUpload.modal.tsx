@@ -1,17 +1,49 @@
 import { useState } from 'react';
-import Button from '../ui/button/Button';
+import { defaultAxios } from '../../utils/axios';
 
 const ImageUploadModal = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [imageUrl, setImageUrl] = useState<any>(null);
+  // const [selectedFile, setSelectedFile] = useState<File>();
 
   const handleButtonClick = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleFileInput = (e: any) => {
-    const imageFile = e.target.files[0];
+  const handleImageChange = (e: any) => {
+    const file = e.target.files[0];
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
 
-    console.log(imageFile);
+    defaultAxios
+      .post('/file/presigned', file)
+      .then((res) => {
+        console.log('res : ', res);
+        const presignedUrl: string = res.data;
+        console.log(presignedUrl);
+
+        defaultAxios
+          .put(presignedUrl, file, {
+            headers: {
+              'Content-Type': file.type
+            }
+          })
+          .then((res) => {
+            console.log('after put: ', res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -19,7 +51,7 @@ const ImageUploadModal = () => {
       <div
         className={`${
           isOpen ? 'opacity-100' : 'opacity-0'
-        } w-96 h-64 p-4 bg-gradient-to-b from-[#7662ae] to-[#727dde] shadow-md shadow-slate-600 rounded-2xl fixed right-16 bottom-[16vh] transition-opacity duration-200 flex-col flex items-center justify-between`}
+        } w-96 h-fit p-4 bg-gradient-to-b from-[#7662ae] to-[#727dde] shadow-md shadow-slate-600 rounded-2xl fixed right-16 bottom-[16vh] transition-opacity duration-200 flex-col flex items-center justify-between`}
       >
         <p className="text-2xl font-semibold text-slate-50">사진 업로드 하기</p>
 
@@ -30,13 +62,21 @@ const ImageUploadModal = () => {
           >
             업로드할 사진을 골라주세요.
           </label>
+          {imageUrl !== '' && (
+            <img
+              src={imageUrl}
+              alt="image-preview"
+              className="border-2 rounded-md mb-2"
+            />
+          )}
           <input
-            onClick={handleFileInput}
+            onClick={handleImageChange}
             className="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-slate-50 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-slate-50 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-slate-50 focus:shadow-te-primary focus:outline-none "
             id="file_input"
             type="file"
             accept="image/*"
           />
+
           <p className="mt-1 text-base text-slate-50" id="file_input_help">
             (SVG, PNG, JPG 를 지원합니다.)
           </p>
@@ -44,9 +84,9 @@ const ImageUploadModal = () => {
 
         {/* metadata로 가져오는 위치 구/동 표기하고, 다른 구/동으로 변경할 수 있도록 드롭다운 등으로 표기 */}
 
-        <Button className="text-lg text-slate-50 border border-slate-50 rounded-full hover:bg-slate-50 hover:text-purple-900">
+        <button className="mt-2 text-base px-2 py-1 text-slate-50 border border-slate-50 rounded-md hover:bg-slate-50 hover:text-purple-900">
           업로드 하기
-        </Button>
+        </button>
       </div>
       <button
         onClick={handleButtonClick}

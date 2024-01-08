@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { socialSignUp } from '../../lib/actions/RegisterActions';
+import { socialSignUp } from '../../lib/actions/user.actions';
 
 const Redirect = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const Redirect = () => {
     } else {
       console.log('인가 코드 없음');
     }
-  }, []);
+  }, [code]);
 
   return (
     <div className="h-screen flex flex-col justify-center items-center">
