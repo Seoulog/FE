@@ -7,55 +7,79 @@ import axios from 'axios';
 
 const ImageUploadModal = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [imageUrl, setImageUrl] = useState<any>(null);
-  const [selectedFile, setSelectedFile] = useState<File>();
+  const [imageUrl, setImageUrl] = useState<string[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File[]>([]);
+  const [previewIndex, setPreviewIndex] = useState<number>(0);
 
   const handleButtonClick = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleImageChange = (event: any) => {
-    if (event.target.files?.[0]) {
-      setImageUrl(() => URL.createObjectURL(event.target.files[0]));
-      setSelectedFile(() => event.target.files[0]);
+  const prevBtnClick = () => {
+    if (previewIndex === 0) setPreviewIndex(selectedFile.length - 1);
+    else {
+      setPreviewIndex((prev) => prev - 1);
     }
   };
 
-  console.log(selectedFile);
+  const nextBtnClick = () => {
+    if (previewIndex === selectedFile.length - 1) setPreviewIndex(0);
+    else {
+      setPreviewIndex((prev) => prev + 1);
+    }
+  };
+
+  const handleImageChange = (event: any) => {
+    setImageUrl([]);
+    setSelectedFile([]);
+
+    if (event.target.files && event.target.files.length > 15) {
+      alert('최대 15개의 사진을 업로드할 수 있습니다.');
+      return;
+    }
+
+    if (event.target.files && event.target.files.length > 0) {
+      for (let i = 0; i < event.target.files.length; i++) {
+        setImageUrl((prev) => [
+          ...prev,
+          URL.createObjectURL(event.target.files[i])
+        ]);
+      }
+      setSelectedFile([...event.target.files]);
+    }
+  };
 
   const handleSubmit = async () => {
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (!selectedFile) {
-      alert('Please select a file');
+    if (selectedFile.length === 0) {
+      alert('파일을 선택해주세요.');
       return;
     }
 
     try {
+      const fileNames = selectedFile.map((file) => file.name);
+
       const response = await axios.post(
-        'http://localhost:8080/file/presigned',
+        // 'http://localhost:8080/file/presigned',      // for local
+        `${process.env.REACT_APP_API_URL}/file/presigned`, // for production
         {
-          fileName: selectedFile?.name,
-          fileType: selectedFile?.type
+          images: fileNames
         }
       );
 
-      console.log(selectedFile?.name);
-      console.log(selectedFile?.type);
+      const { preSignedUrls } = response.data;
 
-      console.log(response.data);
-      const url = response.data;
+      for await (const [index, file] of selectedFile.entries()) {
+        await axios.put(preSignedUrls[index], file, {
+          headers: {
+            'Content-Type': file.type
+          }
+        });
+      }
 
-      const res = await axios.put(url, selectedFile, {
-        headers: {
-          'Content-Type': selectedFile.type
-        }
-      });
-
-      alert('File uploaded successfully!');
-      return res;
+      alert('성공적으로 업로드 되었습니다.');
     } catch (error) {
       console.error('Error uploading file: ', error);
-      alert('Error uploading file. Please try again.');
+      alert('에러가 발생했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
@@ -64,7 +88,7 @@ const ImageUploadModal = () => {
       <div
         className={`${
           isOpen ? 'opacity-100' : 'opacity-0'
-        } w-96 h-fit p-4 bg-gradient-to-b from-[#7662ae] to-[#727dde] shadow-md shadow-slate-600 rounded-2xl fixed right-16 bottom-[16vh] transition-opacity duration-200 flex-col flex items-center justify-between`}
+        } w-96 h-fit p-4 bg-gradient-to-b from-[#7662ae] to-[#727dde] shadow-md shadow-slate-600 rounded-2xl fixed right-16 rounded-br-[32px]  bottom-[8.6vh] transition-opacity duration-200 flex-col flex items-center justify-between`}
       >
         <p className="text-2xl font-semibold text-slate-50">사진 업로드 하기</p>
 
@@ -75,12 +99,58 @@ const ImageUploadModal = () => {
           >
             업로드할 사진을 골라주세요.
           </label>
-          {imageUrl && (
-            <img
-              src={imageUrl}
-              alt="image-preview"
-              className="border-2 rounded-md mb-2"
-            />
+          {imageUrl.length > 0 && (
+            <div className="flex flex-col mb-1 gap-1">
+              <img
+                src={imageUrl[previewIndex]}
+                alt="image-preview"
+                className="border-2 rounded-md max-h-96"
+              />
+              {imageUrl.length > 1 && (
+                <div className="h-full flex border p-1 w-full rounded-md items-center justify-center">
+                  <button
+                    onClick={prevBtnClick}
+                    className="h-full text-slate-50 w-1/2 flex items-center justify-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24px"
+                      height="24px"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M6 12H18M6 12L11 7M6 12L11 17"
+                        stroke="#FFFFFF"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={nextBtnClick}
+                    className="h-full text-slate-50 w-1/2 flex items-center justify-center border-l"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24px"
+                      height="24px"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        d="M6 12H18M18 12L13 7M18 12L13 17"
+                        stroke="#FFFFFF"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
           )}
           <input
             onChange={handleImageChange}
@@ -88,6 +158,7 @@ const ImageUploadModal = () => {
             id="file_input"
             type="file"
             accept="image/png, image/jpeg, image/jpg"
+            multiple
           />
 
           <p className="mt-1 text-base text-slate-50" id="file_input_help">
