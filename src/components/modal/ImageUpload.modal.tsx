@@ -84,11 +84,11 @@ const ImageUploadModal = () => {
   };
 
   return (
-    <div className="hidden lg:block ">
+    <div className="">
       <div
         className={`${
           isOpen ? 'opacity-100' : 'opacity-0'
-        } w-96 h-fit p-4 bg-gradient-to-b from-[#7662ae] to-[#727dde] shadow-md shadow-slate-600 rounded-2xl fixed right-16 rounded-br-[32px]  bottom-[8.6vh] transition-opacity duration-200 flex-col flex items-center justify-between`}
+        } w-96 h-fit p-4 bg-gradient-to-b from-[#7662ae] to-[#727dde] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-8rem)] shadow-md shadow-slate-600 rounded-2xl fixed rounded-br-[32px] right-4 bottom-24 md:right-16 md:bottom-[8.6vh] z-10 transition-opacity duration-200 flex-col flex items-center justify-between`}
       >
         <p className="text-2xl font-semibold text-slate-50">사진 업로드 하기</p>
 
@@ -104,7 +104,7 @@ const ImageUploadModal = () => {
               <img
                 src={imageUrl[previewIndex]}
                 alt="image-preview"
-                className="border-2 rounded-md max-h-96"
+                className="border-2 rounded-md max-h-64 object-contain"
               />
               {imageUrl.length > 1 && (
                 <div className="h-full flex border p-1 w-full rounded-md items-center justify-center">
@@ -177,7 +177,7 @@ const ImageUploadModal = () => {
       </div>
       <button
         onClick={handleButtonClick}
-        className="flex h-16 w-16 rounded-full bg-gradient-to-b from-[#7662ae] to-[#727dde] shadow-md shadow-slate-600 justify-center items-center fixed right-16 bottom-[8.6vh]"
+        className="flex h-12 w-12 md:h-16 md:w-16 rounded-full bg-gradient-to-b from-[#7662ae] to-[#727dde] shadow-md shadow-slate-600 justify-center items-center fixed right-4 bottom-24 md:right-16 md:bottom-[8.6vh] z-20"
       >
         <svg
           width="26"
