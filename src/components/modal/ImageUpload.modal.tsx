@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from 'react';
@@ -13,9 +14,14 @@ const ImageUploadModal = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleImageChange = (e: any) => {
-    setSelectedFile(e.target.files[0]);
+  const handleImageChange = (event: any) => {
+    if (event.target.files?.[0]) {
+      setImageUrl(() => URL.createObjectURL(event.target.files[0]));
+      setSelectedFile(() => event.target.files[0]);
+    }
   };
+
+  console.log(selectedFile);
 
   const handleSubmit = async () => {
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -33,10 +39,10 @@ const ImageUploadModal = () => {
         }
       );
 
-      const { url } = response.data;
       console.log(response.data);
+      const url = response.data;
 
-      const res = await axios.put(url, selectedFile, {
+      const res = await axios.put(url, {
         headers: {
           'Content-Type': selectedFile.type
         }
@@ -66,7 +72,7 @@ const ImageUploadModal = () => {
           >
             업로드할 사진을 골라주세요.
           </label>
-          {imageUrl !== '' && (
+          {imageUrl && (
             <img
               src={imageUrl}
               alt="image-preview"
@@ -74,15 +80,15 @@ const ImageUploadModal = () => {
             />
           )}
           <input
-            onClick={handleImageChange}
+            onChange={handleImageChange}
             className="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-slate-50 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-slate-50 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-slate-50 focus:shadow-te-primary focus:outline-none "
             id="file_input"
             type="file"
-            accept="image/*"
+            accept="image/png, image/jpeg, image/jpg"
           />
 
           <p className="mt-1 text-base text-slate-50" id="file_input_help">
-            (SVG, PNG, JPG 를 지원합니다.)
+            (PNG, JPG, JPEG를 지원합니다.)
           </p>
         </div>
 
