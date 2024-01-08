@@ -39,10 +39,13 @@ const ImageUploadModal = () => {
         }
       );
 
+      console.log(selectedFile?.name);
+      console.log(selectedFile?.type);
+
       console.log(response.data);
       const url = response.data;
 
-      const res = await axios.put(url, {
+      const res = await axios.put(url, selectedFile, {
         headers: {
           'Content-Type': selectedFile.type
         }
