@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { socialLogin } from '../../lib/actions/loginActions';
+import { socialLogin } from '../../lib/actions/user.actions';
 
 const Redirect = () => {
   const navigate = useNavigate();

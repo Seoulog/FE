@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useFormik } from 'formik';
 
-import { defaultSignUp } from '../../../lib/actions/RegisterActions';
+import { defaultSignUp } from '../../../lib/actions/user.actions';
 import { validate } from '../../../lib/validations/RegisterValidation';
 
 interface IFormValues {
@@ -26,11 +26,7 @@ const RegisterForm = () => {
     initialValues,
     onSubmit: async (values: IFormValues) => {
       try {
-        await defaultSignUp(
-          values.email,
-          values.password,
-          values.nickname
-        );
+        await defaultSignUp(values.email, values.password, values.nickname);
         navigate('/home');
       } catch (error: any) {
         console.log(error);
@@ -50,10 +46,7 @@ const RegisterForm = () => {
       className="flex flex-col gap-3"
     >
       <p className="text-[#504E48] font-bold text-xl mb-6">이메일로 회원가입</p>
-      <label
-        htmlFor="email"
-        className="text-[#504E48] font-bold text-base"
-      >
+      <label htmlFor="email" className="text-[#504E48] font-bold text-base">
         이메일 주소
       </label>
       <input
