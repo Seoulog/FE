@@ -21,18 +21,18 @@ export const userSlice = createSlice({
     SET_USER: (state, action: PayloadAction<IUserState>) => {
       state.nickname = action.payload.nickname;
       state.email = action.payload.email;
-      state.isLogin = action.payload.isLogin;
     },
     DELETE_USER: (state) => {
       state.email = '';
       state.nickname = '';
-      state.isLogin = false;
     },
-    SET_ISLOGIN: (state) => {
+    SET_ISLOGIN: (state, action: PayloadAction<string>) => {
       state.isLogin = true;
+      state.accessToken = action.payload;
     },
     DELETE_ISLOGIN: (state) => {
       state.isLogin = false;
+      state.accessToken = '';
     },
     SET_TOKEN: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload;
