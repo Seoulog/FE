@@ -7,7 +7,7 @@ import { defaultLogin } from '../../../lib/actions/loginActions';
 import { validate } from '../../../lib/validations/LoginValidation';
 import axios from 'axios';
 import { useAppDispatch } from '../../../lib/redux/hooks';
-import { SET_TOKEN } from '../../../lib/redux/slices/userSlice';
+import { SET_ISLOGIN } from '../../../lib/redux/slices/userSlice';
 
 interface IFormValues {
   email: string;
@@ -29,7 +29,7 @@ const LoginForm = () => {
       try {
         const response = await defaultLogin(values.email, values.password);
         if (response.status === 200) {
-          dispatch(SET_TOKEN(response.data.access_token));
+          dispatch(SET_ISLOGIN(response.data.access_token));
           navigate('/home');
         }
       } catch (error) {
