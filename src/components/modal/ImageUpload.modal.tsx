@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { useState } from 'react';
-import { defaultAxios } from '../../utils/axios';
-import axios from 'axios';
+import { authAxios, defaultAxios } from '../../utils/axios';
 
 const ImageUploadModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -58,7 +56,7 @@ const ImageUploadModal = () => {
     try {
       const fileNames = selectedFile.map((file) => file.name);
 
-      const response = await axios.post(
+      const response = await authAxios.post(
         // 'http://localhost:8080/file/presigned',      // for local
         `${process.env.REACT_APP_API_URL}/file/presigned`, // for production
         {
@@ -69,7 +67,7 @@ const ImageUploadModal = () => {
       const { preSignedUrls } = response.data;
 
       for await (const [index, file] of selectedFile.entries()) {
-        await axios.put(preSignedUrls[index], file, {
+        await defaultAxios.put(preSignedUrls[index], file, {
           headers: {
             'Content-Type': file.type
           }
