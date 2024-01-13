@@ -1,8 +1,4 @@
 import axios from 'axios';
-<<<<<<< HEAD
-=======
-import { setCookie } from '../../utils/cookie';
->>>>>>> e64f2f4ec68206cc155710eafedad037845b80cf
 import { defaultAxios } from '../../utils/axios';
 
 // TODO : token expire time 설정
@@ -13,21 +9,6 @@ export const defaultLogin = async (email: string, password: string) => {
     password
   });
 
-<<<<<<< HEAD
-=======
-  const { access_token: accessToken, refresh_token: refreshToken } =
-    response.data;
-
-  setCookie('accessToken', accessToken, {
-    path: '/',
-    secure: '/'
-  });
-  setCookie('refreshToken', refreshToken, {
-    path: '/',
-    secure: '/'
-  });
-
->>>>>>> e64f2f4ec68206cc155710eafedad037845b80cf
   return response;
 };
 
@@ -36,21 +17,6 @@ export const socialLogin = async (platform: string, code: string) => {
     `${process.env.REACT_APP_BASE_API_URL}/users/login/${platform}?code=${code}`
   );
 
-<<<<<<< HEAD
-=======
-  const { access_token: accessToken, refresh_token: refreshToken } =
-    response.data;
-
-  setCookie('accessToken', accessToken, {
-    path: '/',
-    secure: '/'
-  });
-  setCookie('refreshToken', refreshToken, {
-    path: '/',
-    secure: '/'
-  });
-
->>>>>>> e64f2f4ec68206cc155710eafedad037845b80cf
   return response;
 };
 
