@@ -5,6 +5,7 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig
 } from 'axios';
+import store from '../lib/redux/store';
 
 export const defaultAxios = axios.create({
   baseURL: process.env.REACT_APP_BASE_API_URL,
@@ -20,7 +21,7 @@ export const authAxios = axios.create({
 const onRequest = (
   config: InternalAxiosRequestConfig
 ): InternalAxiosRequestConfig => {
-  const accessToken = localStorage.getItem('accessToken');
+  const { accessToken } = store.getState().user;
 
   (config.headers as AxiosHeaders).set(
     'Authorization',
