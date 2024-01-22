@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-const AlbumFilter = () => {
+const PicturesFilter = () => {
   const [onClick, setOnClick] = useState(false);
 
   const sortOptions = [
-    { name: '최신순', href: '#', current: true },
-    { name: '오래된 순', href: '#', current: false }
+    { name: '최신순', href: '#' },
+    { name: '오래된 순', href: '#' }
   ];
 
   const handleButtonClick = () => {
@@ -48,9 +48,7 @@ const AlbumFilter = () => {
               <li>
                 <a
                   href={item.href}
-                  className={`${
-                    item.current ? 'bg-slate-100' : ''
-                  } block px-4 py-2 hover:bg-slate-100 text-[#5b4642]`}
+                  className="block px-4 py-2 hover:bg-slate-100 text-[#5b4642]"
                 >
                   {item.name}
                 </a>
@@ -63,4 +61,4 @@ const AlbumFilter = () => {
   );
 };
 
-export default AlbumFilter;
+export default PicturesFilter;

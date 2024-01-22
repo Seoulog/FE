@@ -4,7 +4,7 @@ import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
 import { images } from './dummyimage';
 
-const AlbumContainer = () => {
+const PicturesContainer = () => {
   return (
     <ResponsiveMasonry
       columnsCountBreakPoints={{ 480: 1, 768: 2, 976: 3, 1440: 4 }}
@@ -18,4 +18,4 @@ const AlbumContainer = () => {
   );
 };
 
-export default AlbumContainer;
+export default PicturesContainer;

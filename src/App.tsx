@@ -8,7 +8,7 @@ import FindPassword from './pages/help/password';
 import Register from './pages/register';
 import RegisterRedirect from './pages/register/RegisterRedirect';
 import Home from './pages/home';
-import Album from './pages/album';
+import Pictures from './pages/pictures';
 
 const App = () => {
   return (
@@ -22,7 +22,7 @@ const App = () => {
           <Route path="/register/redirect/*" element={<RegisterRedirect />} />
           <Route path="/help/password" element={<FindPassword />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/albums" element={<Album />} />
+          <Route path="/pictures" element={<Pictures />} />
           <Route path="*" element={<div>Not Found</div>} />
         </Routes>
       </BrowserRouter>

@@ -1,10 +1,10 @@
 import React from 'react';
 
 import Layout from '../../components/layout/Layout';
-import AlbumContainer from './AlbumContainer';
-import AlbumFilter from './AlbumFilter';
+import PicturesContainer from './PicturesContainer';
+import PicturesFilter from './PicturesFilter';
 
-const Album = () => {
+const Pictures = () => {
   return (
     <div>
       <Layout>
@@ -16,13 +16,13 @@ const Album = () => {
             <p className="text-xl text-[#5b4642] fond-semibold">
               서울특별시 {'>'} 종로구 {'>'} 홍지동
             </p>
-            <AlbumFilter />
+            <PicturesFilter />
           </div>
-          <AlbumContainer />
+          <PicturesContainer />
         </div>
       </Layout>
     </div>
   );
 };
 
-export default Album;
+export default Pictures;
