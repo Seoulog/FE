@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 
-const PicturesFilter = () => {
-  const [onClick, setOnClick] = useState(false);
+interface PicturesFilterProps {
+  handleFilter: () => void;
+}
 
-  const sortOptions = [
-    { name: '최신순', href: '#' },
-    { name: '오래된 순', href: '#' }
-  ];
+const PicturesFilter = ({ handleFilter }: PicturesFilterProps) => {
+  const [onClick, setOnClick] = useState(false);
 
   const handleButtonClick = () => {
     setOnClick(!onClick);
@@ -41,20 +40,15 @@ const PicturesFilter = () => {
         className={`${
           onClick ? 'opacity-100' : 'opacity-0'
         } absolute mt-10 right-5 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-40 transition-opacity`}
+        onClick={handleButtonClick}
       >
         <ul className="py-2 text-lg">
-          {sortOptions.map((item) => {
-            return (
-              <li>
-                <a
-                  href={item.href}
-                  className="block px-4 py-2 hover:bg-slate-100 text-[#5b4642]"
-                >
-                  {item.name}
-                </a>
-              </li>
-            );
-          })}
+          <FilterBtn title="최신순" value="Latest" onClick={handleFilter} />
+          <FilterBtn
+            title="오래된 순"
+            value="Earliest"
+            onClick={handleFilter}
+          />
         </ul>
       </div>
     </div>
@@ -62,3 +56,23 @@ const PicturesFilter = () => {
 };
 
 export default PicturesFilter;
+
+interface Props {
+  title: string;
+  value: string;
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+const FilterBtn = ({ title, value, onClick }: Props) => {
+  return (
+    <li className="w-full">
+      <button
+        className="w-full px-4 py-2 hover:bg-slate-100 text-left text-[#5b4642]"
+        value={value}
+        onClick={onClick}
+      >
+        {title}
+      </button>
+    </li>
+  );
+};
