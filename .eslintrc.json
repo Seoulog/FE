@@ -16,6 +16,8 @@
     "@typescript-eslint/member-delimiter-style": "off",
     "@typescript-eslint/semi": "off",
     "semi": "off",
-    "comma-dangle": "off"
+    "comma-dangle": "off",
+    "space-before-function-paren": "off",
+    "@typescript-eslint/space-before-function-paren": "off"
   }
 }

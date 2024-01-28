@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { authAxios, defaultAxios } from '../../utils/axios';
 
+import EXIF from 'exif-js';
+
 const ImageUploadModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState<string[]>([]);
@@ -27,7 +29,7 @@ const ImageUploadModal = () => {
     }
   };
 
-  const handleImageChange = (event: any) => {
+  const handleImageChange = async (event: any) => {
     setImageUrl([]);
     setSelectedFile([]);
 
@@ -38,12 +40,29 @@ const ImageUploadModal = () => {
 
     if (event.target.files && event.target.files.length > 0) {
       for (let i = 0; i < event.target.files.length; i++) {
-        setImageUrl((prev) => [
-          ...prev,
-          URL.createObjectURL(event.target.files[i])
-        ]);
+        const file = event.target.files[i];
+
+        // 이미지 URL 생성 및 저장
+        setImageUrl((prev) => [...prev, URL.createObjectURL(file)]);
+
+        // 선택된 파일 저장
+        setSelectedFile((prev) => [...prev, file]);
+
+        // EXIF 정보 출력
+        const exifDataArray: any = await Promise.all(
+          imageUrl.map(async (file) => {
+            return await new Promise((resolve, reject) => {
+              EXIF.getData(file, function () {
+                const exifData = EXIF.getAllTags(this);
+                console.log(exifData);
+                resolve(exifData);
+              });
+            });
+          })
+        );
+
+        console.log(exifDataArray);
       }
-      setSelectedFile([...event.target.files]);
     }
   };
 
