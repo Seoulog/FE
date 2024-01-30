@@ -1,14 +1,62 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import { useState } from 'react';
+import { type ChangeEvent, useState, useEffect } from 'react';
 import { authAxios, defaultAxios } from '../../utils/axios';
 
 import EXIF from 'exif-js';
 
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+function convertDegreesMinutesSecondsToDecimal(
+  degrees: number,
+  minutes: number,
+  seconds: number,
+  direction: 'N' | 'S' | 'E' | 'W'
+): number {
+  let decimal = degrees + minutes / 60 + seconds / 3600;
+  if (direction === 'S' || direction === 'W') {
+    decimal = -decimal;
+  }
+  return decimal;
+}
+
+function convertDMSArrayToCoordinates(
+  GPSLatitude: [number, number, number],
+  GPSLatitudeRef: 'N' | 'S',
+  GPSLongitude: [number, number, number],
+  GPSLongitudeRef: 'E' | 'W'
+): Coordinates {
+  if (GPSLatitude.length !== 3 || GPSLongitude.length !== 3) {
+    throw new Error(
+      'Invalid input arrays. Each array should contain degrees, minutes, seconds, and direction.'
+    );
+  }
+
+  const latitude = convertDegreesMinutesSecondsToDecimal(
+    ...GPSLatitude,
+    GPSLatitudeRef
+  );
+  const longitude = convertDegreesMinutesSecondsToDecimal(
+    ...GPSLongitude,
+    GPSLongitudeRef
+  );
+
+  return {
+    latitude,
+    longitude
+  };
+}
+
 const ImageUploadModal = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string[]>([]);
-  const [selectedFile, setSelectedFile] = useState<File[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [imageFiles, setImageFiles] = useState<any[]>([]);
+  const [extractedMetadata, setExtractedMetadata] = useState<any[]>([]);
   const [previewIndex, setPreviewIndex] = useState<number>(0);
 
   const handleButtonClick = () => {
@@ -16,64 +64,44 @@ const ImageUploadModal = () => {
   };
 
   const prevBtnClick = () => {
-    if (previewIndex === 0) setPreviewIndex(selectedFile.length - 1);
+    if (previewIndex === 0) setPreviewIndex(imageFiles.length - 1);
     else {
       setPreviewIndex((prev) => prev - 1);
     }
   };
 
   const nextBtnClick = () => {
-    if (previewIndex === selectedFile.length - 1) setPreviewIndex(0);
+    if (previewIndex === imageFiles.length - 1) setPreviewIndex(0);
     else {
       setPreviewIndex((prev) => prev + 1);
     }
   };
 
-  const handleImageChange = async (event: any) => {
-    setImageUrl([]);
-    setSelectedFile([]);
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPreviewIndex(0);
+    setExtractedMetadata([]);
+    setImageFiles([]);
 
-    if (event.target.files && event.target.files.length > 15) {
-      alert('최대 15개의 사진을 업로드할 수 있습니다.');
+    const selectedFiles: any[] = Array.from(e.target.files ?? []);
+
+    if (selectedFiles.length === 0) return;
+
+    if (selectedFiles.length > 10) {
+      alert('10개 이상의 파일을 선택할 수 없습니다.');
       return;
     }
 
-    if (event.target.files && event.target.files.length > 0) {
-      for (let i = 0; i < event.target.files.length; i++) {
-        const file = event.target.files[i];
-
-        // 이미지 URL 생성 및 저장
-        setImageUrl((prev) => [...prev, URL.createObjectURL(file)]);
-
-        // 선택된 파일 저장
-        setSelectedFile((prev) => [...prev, file]);
-
-        // EXIF 정보 출력
-        const exifDataArray: any = await Promise.all(
-          imageUrl.map(async (file) => {
-            return await new Promise((resolve, reject) => {
-              EXIF.getData(file, function () {
-                const exifData = EXIF.getAllTags(this);
-                console.log(exifData);
-                resolve(exifData);
-              });
-            });
-          })
-        );
-
-        console.log(exifDataArray);
-      }
-    }
+    setImageFiles(selectedFiles);
   };
 
   const handleSubmit = async () => {
-    if (selectedFile.length === 0) {
+    if (imageFiles.length === 0) {
       alert('파일을 선택해주세요.');
       return;
     }
 
     try {
-      const fileNames = selectedFile.map((file) => file.name);
+      const fileNames = imageFiles.map((file) => file.name);
 
       const response = await authAxios.post(
         // 'http://localhost:8080/file/presigned',      // for local
@@ -85,7 +113,7 @@ const ImageUploadModal = () => {
 
       const { preSignedUrls } = response.data;
 
-      for await (const [index, file] of selectedFile.entries()) {
+      for await (const [index, file] of imageFiles.entries()) {
         await defaultAxios.put(preSignedUrls[index], file, {
           headers: {
             'Content-Type': file.type
@@ -99,6 +127,75 @@ const ImageUploadModal = () => {
       alert('에러가 발생했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
+
+  console.log(extractedMetadata);
+
+  useEffect(() => {
+    // Extract Exif data for each selected image
+    const extractExifData = async () => {
+      setIsLoading(true);
+      const exifDataPromises = imageFiles.map(async (file) => {
+        return await new Promise<any>((resolve) => {
+          EXIF.getData(file, function () {
+            const exifData = EXIF.getAllTags(this);
+
+            const {
+              DateTime,
+              DateTimeOriginal,
+              GPSLatitude,
+              GPSLongitude,
+              GPSLatitudeRef,
+              GPSLongitudeRef,
+              Make,
+              Model
+            } = exifData;
+
+            if (!GPSLatitude || !GPSLongitude) {
+              resolve({
+                DateTime: DateTime ?? Date.now(),
+                DateTimeOriginal: DateTimeOriginal ?? Date.now(),
+                latitude: undefined,
+                longitude: undefined,
+                Make: Make ?? '',
+                Model: Model ?? ''
+              });
+            } else {
+              const { latitude, longitude } = convertDMSArrayToCoordinates(
+                GPSLatitude,
+                GPSLatitudeRef as 'N' | 'S',
+                GPSLongitude,
+                GPSLongitudeRef as 'E' | 'W'
+              );
+
+              const filteredExifData = {
+                DateTime: DateTime ?? Date.now(),
+                DateTimeOriginal: DateTimeOriginal ?? Date.now(),
+                latitude: latitude ?? 0,
+                longitude: longitude ?? 0,
+                Make: Make ?? '',
+                Model: Model ?? ''
+              };
+
+              resolve(filteredExifData);
+            }
+          });
+        });
+      });
+
+      try {
+        const results = await Promise.all(exifDataPromises);
+        setExtractedMetadata(results);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (imageFiles.length > 0) {
+      extractExifData();
+    }
+  }, [imageFiles]);
 
   return (
     <div className="">
@@ -116,14 +213,14 @@ const ImageUploadModal = () => {
           >
             업로드할 사진을 골라주세요.
           </label>
-          {imageUrl.length > 0 && (
+          {imageFiles.length > 0 && (
             <div className="flex flex-col mb-1 gap-1">
               <img
-                src={imageUrl[previewIndex]}
+                src={URL.createObjectURL(imageFiles[previewIndex])}
                 alt="image-preview"
                 className="border-2 rounded-md max-h-64 object-contain"
               />
-              {imageUrl.length > 1 && (
+              {imageFiles.length > 1 && (
                 <div className="h-full flex border p-1 w-full rounded-md items-center justify-center">
                   <button
                     onClick={prevBtnClick}
@@ -170,9 +267,9 @@ const ImageUploadModal = () => {
             </div>
           )}
           <input
+            disabled={isLoading}
             onChange={handleImageChange}
             className="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-slate-50 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-slate-50 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-slate-50 focus:shadow-te-primary focus:outline-none "
-            id="file_input"
             type="file"
             accept="image/png, image/jpeg, image/jpg"
             multiple
@@ -187,6 +284,7 @@ const ImageUploadModal = () => {
 
         <button
           onClick={handleSubmit}
+          disabled={isLoading}
           className="mt-2 text-base px-2 py-1 text-slate-50 border border-slate-50 rounded-md hover:bg-slate-50 hover:text-purple-900"
         >
           업로드 하기
