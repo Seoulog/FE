@@ -1,6 +1,7 @@
 {
   "name": "seoulog",
   "version": "0.1.0",
+  "homepage": "https://main.dvd0v87m2ocpk.amplifyapp.com",
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
