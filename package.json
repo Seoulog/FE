@@ -28,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "tsc -p .",
+    "build": "tsc && cp -r public dist",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
